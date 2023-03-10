@@ -85,7 +85,13 @@ public class Parser {
             Custom cus = this.customFun.get(lexer.peek().substring(0, 1));
             Factor expr = cus.expand(lexer.peek().substring(1), this.customFun);
             lexer.next();
-            return expr;
+            if (((Expr) expr).getTerms().size() == 1
+                    && ((Expr) expr).getTerms().get(0).getFactors().size() == 1) {
+                return ((Expr) expr).getTerms().get(0).getFactors().get(0);
+            } else {
+                return expr;
+            }
+
         } else if (lexer.peek().charAt(0) == 's' || lexer.peek().charAt(0) == 'c') {       // 三角函数
             Trigo trigo = new Trigo(lexer.peek().substring(0, 3));
             trigo.getexpr(lexer.peek().substring(3), this.customFun);
