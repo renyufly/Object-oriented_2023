@@ -35,8 +35,8 @@ public class Main {
         if (sb.charAt(0) == '+') {
             sb.deleteCharAt(0);
         }
-        if(sb.charAt(sb.length()-1) == '+' || sb.charAt(sb.length()-1) == '-') {
-            sb.deleteCharAt(sb.length()-1);
+        if (sb.charAt(sb.length() - 1) == '+' || sb.charAt(sb.length() - 1) == '-') {
+            sb.deleteCharAt(sb.length() - 1);
         }
 
         System.out.println(sb.toString());

@@ -89,42 +89,34 @@ public class Lexer {
                 sb.append("cos");
             }
             pos = pos + 4;
-            int flag = 1;  //标记匹配括号数量，左括号+1，右括号-1
-            for (int i = pos; i < input.length(); i++) {
-                sb.append(input.charAt(i));
-                if (input.charAt(i) == '(') {
-                    flag++;
-                } else if (input.charAt(i) == ')') {
-                    flag--;
-                }
-                if (flag == 0) {    // 最终会读进去最后的右括号
-                    pos = i + 1;
-                    break;
-                }
-            }
+            matchBracket(sb);
             sb.deleteCharAt(sb.length() - 1);  //删去不要的最后一个右括号。 sb前三个个字符即三角函数名
             curToken = sb.toString();
-        } else if(c == 'd') {      //识别求导算子 dx, dy, dz
+        } else if (c == 'd') {      //识别求导算子 dx, dy, dz
             StringBuilder sb = new StringBuilder();
             sb.append(c);         //sb第一个字符为d
             pos = pos + 1;
             sb.append(input.charAt(pos));   //sb第二个字符为对谁偏导
-            pos = pos+2;
-            int flag = 1;      //匹配括号
-            for (int i = pos; i < input.length(); i++) {
-                sb.append(input.charAt(i));
-                if (input.charAt(i) == '(') {
-                    flag++;
-                } else if (input.charAt(i) == ')') {
-                    flag--;
-                }
-                if (flag == 0) {    // 最终会读进去最后的右括号
-                    pos = i + 1;
-                    break;
-                }
-            }
+            pos = pos + 2;
+            matchBracket(sb);
             sb.deleteCharAt(sb.length() - 1);  //删去最后一个右括号。sb前两个字符为dx/dy/dz
             curToken = sb.toString();
+        }
+    }
+
+    private void matchBracket(StringBuilder sb) {
+        int flag = 1;      //匹配括号
+        for (int i = pos; i < input.length(); i++) {
+            sb.append(input.charAt(i));
+            if (input.charAt(i) == '(') {
+                flag++;
+            } else if (input.charAt(i) == ')') {
+                flag--;
+            }
+            if (flag == 0) {    // 最终会读进去最后的右括号
+                pos = i + 1;
+                break;
+            }
         }
     }
 

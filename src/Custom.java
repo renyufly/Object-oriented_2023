@@ -6,7 +6,7 @@ public class Custom {            //自定义函数类
     private String formula;   //自定义函数的公式
     private char[] parameter;    //形参名
 
-    public Custom(String str,  HashMap<String, Custom> customFun) {       //构造
+    public Custom(String str, HashMap<String, Custom> customFun) {       //构造
         String str1 = new String(str);
         str1 = str1.replaceAll("[ \t]+", "");
         this.name = str1.substring(0, 1);       //函数名

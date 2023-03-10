@@ -96,7 +96,7 @@ public class Parser {
                 lexer.next();       //读下一个符
             }
             return trigo;
-        } else if(lexer.peek().charAt(0) == 'd') {       //求导因子
+        } else if (lexer.peek().charAt(0) == 'd') {       //求导因子
             String var = String.valueOf(this.lexer.peek().charAt(1));
             Lexer lexer1 = new Lexer(this.lexer.peek().substring(2));
             Parser parser1 = new Parser(lexer1, customFun);
@@ -105,18 +105,22 @@ public class Parser {
             lexer.next();
             return deri.differentiate(var, expr1);   //表达式求导
         } else {                               //数字因子
-            if (lexer.peek().equals("-")) {
-                lexer.next();
-                BigInteger num = new BigInteger("-" + lexer.peek());
-                lexer.next();
-                return new Number(num);      //返回一个负数
-            } else if (lexer.peek().equals("+")) {
-                lexer.next();
-            }
-            BigInteger num = new BigInteger(lexer.peek());
-            lexer.next();
-            return new Number(num);       //返回数字
+            return numfact();       //返回数字
         }
+    }
+
+    private Number numfact() {
+        if (lexer.peek().equals("-")) {
+            lexer.next();
+            BigInteger num = new BigInteger("-" + lexer.peek());
+            lexer.next();
+            return new Number(num);      //返回一个负数
+        } else if (lexer.peek().equals("+")) {
+            lexer.next();
+        }
+        BigInteger num = new BigInteger(lexer.peek());
+        lexer.next();
+        return new Number(num);
     }
 
     private Expr indexExpr(Expr expr, BigInteger index1) {

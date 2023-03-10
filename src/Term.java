@@ -50,7 +50,7 @@ public class Term {
                     }
                 }
             } else if (factor instanceof Trigo) {    //三角函数化简
-                if( !((Trigo) factor).getIndex().equals(zero)) { //指数为0就不管
+                if (!((Trigo) factor).getIndex().equals(zero)) { //指数为0就不管
                     this.factors.add(factor);
                 }
             } else {
@@ -71,7 +71,7 @@ public class Term {
         for (int i = 0; i < this.factors.size(); i++) {  //对每个因子查看类型选择输出
             Factor fact = this.factors.get(i);
             if (fact instanceof Pow) {
-                if( !((Pow) fact).getIndex().equals(zero)) {  //指数不为0
+                if (!((Pow) fact).getIndex().equals(zero)) {  //指数不为0
                     if (i != 0 || (i == 0 && !this.coefficient.equals(test1))) {
                         sb.append("*");
                     }
@@ -82,7 +82,7 @@ public class Term {
                     }
                 }
             } else if (fact instanceof Trigo) {
-                if( !((Trigo) fact).getIndex().equals(zero)) {
+                if (!((Trigo) fact).getIndex().equals(zero)) {
                     if (i != 0 || (i == 0 && !this.coefficient.equals(test1))) {
                         sb.append("*");
                     }
@@ -91,19 +91,7 @@ public class Term {
                     Expr expr = ((Trigo) fact).backExpr();  //返回三角函数里的函数，判断是否要加括号
                     String str = expr.toString();
                     int bracket = backBracket(str);
-                    if (bracket == 1) {   //里面是表达式因子
-                        sb.append("(");
-                        sb.append(expr.toString());
-                        sb.append(")");
-                    } else {
-                        sb.append(expr.toString());
-                    }
-
-                    sb.append(")");
-                    if (!((Trigo) fact).getIndex().equals(test1)) {
-                        sb.append("**");
-                        sb.append(((Trigo) fact).getIndex());
-                    }
+                    addBrack(sb, bracket, expr, fact, test1);
                 }
             } else if (fact instanceof Expr) {      // 表达式因子要和现在已打印出的项相乘，拆开括号
                 if (i != 0) {
@@ -122,6 +110,21 @@ public class Term {
             }
         }
         return sb.toString();
+    }
+
+    private void addBrack(StringBuilder sb, int bracket, Expr expr, Factor fact, BigInteger test1) {
+        if (bracket == 1) {   //里面是表达式因子
+            sb.append("(");
+            sb.append(expr);
+            sb.append(")");
+        } else {
+            sb.append(expr);
+        }
+        sb.append(")");
+        if (!((Trigo) fact).getIndex().equals(test1)) {
+            sb.append("**");
+            sb.append(((Trigo) fact).getIndex());
+        }
     }
 
     private int backBracket(String str) {
