@@ -48,16 +48,16 @@ public class Parser {
 
     public Term parseTerm() {        //解析项
         Term term = new Term();
-        term.addFactor(parseFactor());
+        term.addFactor(parseFactor(term));
 
         while (lexer.peek().equals("*")) {
             lexer.next();
-            term.addFactor(parseFactor());
+            term.addFactor(parseFactor(term));
         }
         return term;
     }
 
-    public Factor parseFactor() {      //解析因子
+    public Factor parseFactor(Term term) {      //解析因子
         if (lexer.peek().equals("(")) {         //表达式因子
             lexer.next();
             Factor expr = parseExpr();     // 只要有括号就执行解析，支持嵌套括号
@@ -68,7 +68,16 @@ public class Parser {
                 ((Expr) expr).setIndex(index);     // 设置指数
                 lexer.next();       //读下一个符
             }
-            return indexExpr((Expr) expr, ((Expr) expr).getIndex());  /*  若有指数，对表达式展开    */
+            Expr ret = indexExpr((Expr) expr, ((Expr) expr).getIndex());
+            if (ret.getTerms().size() == 1 && ret.getTerms().get(0).getFactors().size() == 0) {
+                BigInteger first = new BigInteger("1");
+                Number one = new Number(first);
+                BigInteger cof = term.getCoefficient();
+                term.setCoefficient(cof.multiply(ret.getTerms().get(0).getCoefficient()));
+                return one;
+            } else {
+                return ret;  /*  若有指数，对表达式展开    */
+            }
         } else if (lexer.peek().equals("x") || lexer.peek().equals("y")
                 || lexer.peek().equals("z")) {  // 是幂函数
             Pow power = new Pow(lexer.peek());
@@ -87,32 +96,42 @@ public class Parser {
             lexer.next();
             if (((Expr) expr).getTerms().size() == 1
                     && ((Expr) expr).getTerms().get(0).getFactors().size() == 1) {
+                BigInteger tmp = term.getCoefficient();
+                term.setCoefficient(tmp.multiply(((Expr) expr).getTerms().get(0).getCoefficient()));
                 return ((Expr) expr).getTerms().get(0).getFactors().get(0);
             } else {
                 return expr;
             }
 
         } else if (lexer.peek().charAt(0) == 's' || lexer.peek().charAt(0) == 'c') {       // 三角函数
-            Trigo trigo = new Trigo(lexer.peek().substring(0, 3));
-            trigo.getexpr(lexer.peek().substring(3), this.customFun);
-            lexer.next();
-            if (lexer.peek().equals("^")) {          //识别表达式因子的指数
-                lexer.next();
-                trigo.setIndex(Integer.parseInt(lexer.peek()));     // 设置指数
-                lexer.next();       //读下一个符
-            }
-            return trigo;
+            return trigofact();
         } else if (lexer.peek().charAt(0) == 'd') {       //求导因子
-            String var = String.valueOf(this.lexer.peek().charAt(1));
-            Lexer lexer1 = new Lexer(this.lexer.peek().substring(2));
-            Parser parser1 = new Parser(lexer1, customFun);
-            Expr expr1 = parser1.parseExpr();
-            Derivation deri = new Derivation();
-            lexer.next();
-            return deri.differentiate(var, expr1);   //表达式求导
+            return derifact();//表达式求导
         } else {                               //数字因子
             return numfact();       //返回数字
         }
+    }
+
+    private Trigo trigofact() {
+        Trigo trigo = new Trigo(lexer.peek().substring(0, 3));
+        trigo.getexpr(lexer.peek().substring(3), this.customFun);
+        lexer.next();
+        if (lexer.peek().equals("^")) {          //识别表达式因子的指数
+            lexer.next();
+            trigo.setIndex(Integer.parseInt(lexer.peek()));     // 设置指数
+            lexer.next();       //读下一个符
+        }
+        return trigo;
+    }
+
+    private Expr derifact() {
+        String var = String.valueOf(this.lexer.peek().charAt(1));
+        Lexer lexer1 = new Lexer(this.lexer.peek().substring(2));
+        Parser parser1 = new Parser(lexer1, customFun);
+        Expr expr1 = parser1.parseExpr();
+        Derivation deri = new Derivation();
+        lexer.next();
+        return deri.differentiate(var, expr1);
     }
 
     private Number numfact() {
