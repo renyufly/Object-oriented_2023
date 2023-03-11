@@ -1,8 +1,10 @@
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Term {
-    private final ArrayList<Factor> factors;    // 一个项里存着哪些因子
+    private ArrayList<Factor> factors;    // 一个项里存着哪些因子 [删final]
 
     private BigInteger coefficient;       // 整个项的系数
 
@@ -145,7 +147,7 @@ public class Term {
         return bracket;
     }
 
-    private void bubbleSort(ArrayList<Factor> fact) {  //表达式挪到最后头
+    public void bubbleSort(ArrayList<Factor> fact) {  //表达式挪到最后头
         int len = fact.size();
         for (int i = 0; i < len - 1; i++) {
             for (int j = 0; j < len - 1 - i; j++) {
@@ -166,6 +168,80 @@ public class Term {
                 }
             }
         }
+    }
+
+    public void bubbleSortTrigo() {  //三角函数挪到最后头
+        int len = this.factors.size();
+        for (int i = 0; i < len - 1; i++) {
+            for (int j = 0; j < len - 1 - i; j++) {
+                if (this.factors.get(j) instanceof Trigo
+                        && !(this.factors.get(j + 1) instanceof Trigo)) {
+                    Trigo temp = new Trigo(((Trigo) this.factors.get(j)).getName());
+                    BigInteger index1 = ((Trigo) this.factors.get(j)).getIndex();
+                    temp.setIndex(Integer.valueOf(index1.toString()));
+                    temp.setExpr(clonexpr(((Trigo) this.factors.get(j)).backExpr()));
+
+                    if (this.factors.get(j + 1) instanceof Pow) {
+                        Pow tmpfac = new Pow(((Pow) this.factors.get(j + 1)).getVarname());
+                        BigInteger index2 = ((Pow) this.factors.get(j + 1)).getIndex();
+                        tmpfac.setIndex(Integer.valueOf(index2.toString()));
+                        this.factors.set(j + 1, temp);
+                        this.factors.set(j, tmpfac);
+                    } else {
+                        Expr tmpfact = clonexpr((Expr) this.factors.get(j + 1));
+                        //                    this.factors.set(j+1, temp);
+                        this.factors.set(j, tmpfact);
+
+                    }
+
+                }
+            }
+        }
+    }
+
+    public void bubbleExpr() {   //表达式放前头
+        Comparator<Factor> comparator = new Comparator<Factor>() {
+            @Override
+            public int compare(Factor t1, Factor t2) {
+                if (t1 instanceof Expr && !(t2 instanceof Expr)) {
+                    return -1;  // 如果t1是Expr，t2不是，那么t1排在t2前面
+                } else if (!(t1 instanceof Expr) && t2 instanceof Expr) {
+                    return 1;   // 如果t1不是Expr，t2是，那么t1排在t2后面
+                } else {
+                    return 0;   // 否则t1和t2的位置不变
+                }
+            }
+        };
+
+        Collections.sort(this.factors, comparator);
+
+    }
+
+    private Expr clonexpr(Expr expr1) {    //表达式深克隆
+        Expr ret = new Expr();
+        for (int i = 0; i < expr1.getTerms().size(); i++) {
+            Term term = new Term();
+            term.setCoefficient(expr1.getTerms().get(i).getCoefficient());
+            for (int j = 0; j < expr1.getTerms().get(i).getFactors().size(); j++) {
+                Factor factor = expr1.getTerms().get(i).getFactors().get(j);
+                if (factor instanceof Pow) {
+                    Pow gac = new Pow(((Pow) factor).getVarname());
+                    gac.setIndex(((Pow) factor).getIndex());
+                    term.addFactor(gac);
+                } else if (factor instanceof Trigo) {
+                    Trigo gac = new Trigo(((Trigo) factor).getName());
+                    gac.setIndex1(((Trigo) factor).getIndex());
+                    Expr triexpr = clonexpr(((Trigo) factor).backExpr());
+                    gac.setExpr(triexpr);
+                    term.addFactor(gac);
+                } else {
+                    Expr gac = clonexpr((Expr) factor);
+                    term.addFactor(gac);
+                }
+            }
+            ret.addTerm(term);
+        }
+        return ret;
     }
 
     @Override

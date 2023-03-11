@@ -8,6 +8,7 @@ public class Derivation {      //求导
     }
 
     public Expr differentiate(String var, Expr expr) {   //对表达式求导 [var-对谁偏导]
+
         Expr ret = new Expr();    //结果表达式
         BigInteger zero = new BigInteger("0");
         BigInteger one = new BigInteger("1");
@@ -17,7 +18,10 @@ public class Derivation {      //求导
                 term.setCoefficient(zero); //项为0
                 ret.addTerm(term);
             } else {
-                bubbleSortTrigo(term.getFactors());
+                //           term.bubbleSortTrigo();
+                term.bubbleExpr();
+
+
                 int flag = term.getFactors().size();   //记录三角函数因子位置
                 int isexpr = 0;    //记录是否表达式
                 for (int j = 0; j < term.getFactors().size(); j++) {
@@ -164,20 +168,6 @@ public class Derivation {      //求导
             term1.addFactor(deri2);
             Expr tmpexp = clonexpr(triexpr);
             term1.addFactor(differentiate(var, tmpexp));
-        }
-    }
-
-    private void bubbleSortTrigo(ArrayList<Factor> fact) {  //三角函数挪到最后头
-        int len = fact.size();
-        for (int i = 0; i < len - 1; i++) {
-            for (int j = 0; j < len - 1 - i; j++) {
-                if (fact.get(j) instanceof Trigo && fact.get(j + 1) instanceof Pow) {
-                    Pow temp = new Pow(((Pow) fact.get(j + 1)).getVarname());
-                    temp.setIndex(((Pow) fact.get(j + 1)).getIndex());
-                    fact.set(j + 1, fact.get(j));
-                    fact.set(j, temp);
-                }
-            }
         }
     }
 

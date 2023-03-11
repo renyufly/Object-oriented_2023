@@ -129,9 +129,12 @@ public class Parser {
         Lexer lexer1 = new Lexer(this.lexer.peek().substring(2));
         Parser parser1 = new Parser(lexer1, customFun);
         Expr expr1 = parser1.parseExpr();
+        Lexer lexer2 = new Lexer(expr1.toString());
+        Parser parser2 = new Parser(lexer2, customFun);
+        Expr expr2 = parser2.parseExpr();
         Derivation deri = new Derivation();
         lexer.next();
-        return deri.differentiate(var, expr1);
+        return deri.differentiate(var, expr2);
     }
 
     private Number numfact() {
