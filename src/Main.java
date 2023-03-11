@@ -55,6 +55,9 @@ public class Main {
                 ret.append(sbstr.charAt(i));
             }
         }
+        if (ret.length() > 1 && ret.charAt(0) == '0') {
+            ret.deleteCharAt(0);
+        }
         if (ret.charAt(0) == '+') {
             ret.deleteCharAt(0);
         }

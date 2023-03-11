@@ -18,10 +18,8 @@ public class Derivation {      //求导
                 term.setCoefficient(zero); //项为0
                 ret.addTerm(term);
             } else {
-                //           term.bubbleSortTrigo();
+                term.bubbleSortTrigo();
                 term.bubbleExpr();
-
-
                 int flag = term.getFactors().size();   //记录三角函数因子位置
                 int isexpr = 0;    //记录是否表达式
                 for (int j = 0; j < term.getFactors().size(); j++) {
