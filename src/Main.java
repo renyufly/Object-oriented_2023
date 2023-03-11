@@ -38,8 +38,26 @@ public class Main {
         if (sb.charAt(sb.length() - 1) == '+' || sb.charAt(sb.length() - 1) == '-') {
             sb.deleteCharAt(sb.length() - 1);
         }
-
-        System.out.println(sb.toString());
+        String sbstr = sb.toString();
+        StringBuilder ret = new StringBuilder();
+        int nozero = 0;
+        if ((sbstr.charAt(0) != '0' && sbstr.length() > 1)
+                || (sbstr.charAt(0) == '0' && sbstr.length() == 1)) {
+            ret.append(sbstr.charAt(0));
+            nozero = 1;
+        }
+        for (int i = 1; i < sbstr.length(); i++) {
+            if ((i + 1 < sbstr.length()) && (sbstr.charAt(i) == '+' || sbstr.charAt(i) == '-')
+                    && sbstr.charAt(i + 1) == '0') {
+                i = i + 1;
+            } else {
+                ret.append(sbstr.charAt(i));
+            }
+        }
+        if (ret.charAt(0) == '+') {
+            ret.deleteCharAt(0);
+        }
+        System.out.println(ret.toString());
     }
 
     public static String repeat(String result) {
