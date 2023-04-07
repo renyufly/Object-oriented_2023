@@ -1,6 +1,7 @@
 import com.oocourse.elevator3.PersonRequest;
 import com.oocourse.elevator3.TimableOutput;
 import java.util.ArrayList;
+
 /*
 1、可到达楼层：1 - 11 层
 2、初始位置：1 层
@@ -137,7 +138,11 @@ public class Elevator implements Runnable {  //每个电梯一个线程
     }
 
     public int getWaitingNumber() {
-        return this.waitingPerson.size();
+        if (waitingPerson.isEmpty()) {
+            return 0;
+        } else {
+            return this.waitingPerson.size();
+        }
     }
 
     /*    电梯设置属性方法      */

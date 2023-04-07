@@ -1,5 +1,4 @@
 import com.oocourse.elevator3.PersonRequest;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -53,7 +52,7 @@ public class Controller implements Runnable {     //管理当前运行的所有�
                 ArrayList<Integer> minPath = paths.get(0);
                 for (int i = 1; i < routes.size(); i++) {
                     if ((routes.get(i).size() <= minRoute.size()) ||
-                            elevators.get(routes.get(i)).getWaitingNumber()
+                            elevators.get(routes.get(i).get(0)).getWaitingNumber()
                             < elevators.get(minRoute.get(0)).getWaitingNumber()) {
                         minRoute = routes.get(i);
                         minPath = paths.get(i);
