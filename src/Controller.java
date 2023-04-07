@@ -48,38 +48,39 @@ public class Controller implements Runnable {     //管理当前运行的所有�
                         e.printStackTrace();
                     }
                 }
-            }
-            if (!waitTable.isEmpty()) {
-                Person personRequest = waitTable.getRequest();  //从主请求池获得一个请求
-                /*    对该请求规划分配     */
-                ArrayList<ArrayList<Integer>> routes = new ArrayList<>();
-                ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
-                searchRoute(personRequest, routes, paths);
-                for (int i = 0; i < routes.size(); i++) {
-                    if (personRequest.isUsedEle(routes.get(i))) {
-                        routes.remove(i);
-                        paths.remove(i);
-                        i = i - 1;
+
+                if (!waitTable.isEmpty()) {
+                    Person personRequest = waitTable.getRequest();  //从主请求池获得一个请求
+                    /*    对该请求规划分配     */
+                    ArrayList<ArrayList<Integer>> routes = new ArrayList<>();
+                    ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
+                    searchRoute(personRequest, routes, paths);
+                    for (int i = 0; i < routes.size(); i++) {
+                        if (personRequest.isUsedEle(routes.get(i))) {
+                            routes.remove(i);
+                            paths.remove(i);
+                            i = i - 1;
+                        }
                     }
-                }
-                ArrayList<Integer> minRoute = routes.get(0);
-                ArrayList<Integer> minPath = paths.get(0);
-                for (int i = 1; i < routes.size(); i++) {
-                    if ((routes.get(i).size() <= minRoute.size()) ||
-                            elevators.get(routes.get(i).get(0)).getWaitingNumber()
-                                    < elevators.get(minRoute.get(0)).getWaitingNumber()) {
-                        minRoute = routes.get(i);
-                        minPath = paths.get(i);
+                    ArrayList<Integer> minRoute = routes.get(0);
+                    ArrayList<Integer> minPath = paths.get(0);
+                    for (int i = 1; i < routes.size(); i++) {
+                        if ((routes.get(i).size() <= minRoute.size()) ||
+                                elevators.get(routes.get(i).get(0)).getWaitingNumber()
+                                        < elevators.get(minRoute.get(0)).getWaitingNumber()) {
+                            minRoute = routes.get(i);
+                            minPath = paths.get(i);
+                        }
                     }
+                    personRequest.setShortTermDesti(minPath.get(1));
+                    personRequest.addUsedEleva(elevators.get(minRoute.get(0)).getId());
+                    minPath.remove(0);
+                    elevators.get(minRoute.get(0)).setWaitingPerson(personRequest);
+                    synchronized (waitTable) {
+                        waitTable.notifyAll();
+                    }
+                    minRoute.remove(0);
                 }
-                personRequest.setShortTermDesti(minPath.get(1));
-                personRequest.addUsedEleva(elevators.get(minRoute.get(0)).getId());
-                minPath.remove(0);
-                elevators.get(minRoute.get(0)).setWaitingPerson(personRequest);
-                synchronized (waitTable) {
-                    waitTable.notifyAll();
-                }
-                minRoute.remove(0);
             }
         }
     }
@@ -132,7 +133,8 @@ public class Controller implements Runnable {     //管理当前运行的所有�
                              ArrayList<ArrayList<Integer>> paths) {
         for (Integer key : elevators.keySet()) {
             ArrayList<Integer> floorState = new ArrayList<>(); //0位为curFloor, 1位为destination
-            floorState.add(personRequest.getFrom());
+            int curFloor = personRequest.getFrom();
+            floorState.add(curFloor);
             floorState.add(personRequest.getDesti());
             findPath(floorState, elevators.get(key),
                     new ArrayList<>(), new ArrayList<>(),

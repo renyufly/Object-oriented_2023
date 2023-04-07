@@ -3,6 +3,7 @@ import com.oocourse.elevator3.ElevatorRequest;
 import com.oocourse.elevator3.MaintainRequest;
 import com.oocourse.elevator3.PersonRequest;
 import com.oocourse.elevator3.Request;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -32,7 +33,7 @@ public class InputThread implements Runnable {
                         waitTable.notifyAll();
                     }
                 } else if (request instanceof ElevatorRequest) {   // an ElevatorRequest
-                    ElevatorRequest req = (ElevatorRequest)request;
+                    ElevatorRequest req = (ElevatorRequest) request;
                     Elevator elevator = new Elevator(req.getElevatorId(), waitTable,
                             req.getFloor(), req.getCapacity(), req.getSpeed(), req.getAccess());
                     controller.addElevator(elevator.getId(), elevator);

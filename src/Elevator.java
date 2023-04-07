@@ -1,5 +1,6 @@
 import com.oocourse.elevator3.PersonRequest;
 import com.oocourse.elevator3.TimableOutput;
+
 import java.util.ArrayList;
 
 /*
@@ -173,11 +174,11 @@ public class Elevator implements Runnable {  //每个电梯一个线程
         for (int i = 0; i < waitingPerson.size(); i++) {
             Person pr = waitingPerson.get(i);
             if (pr.getFrom() == this.curFloor && persons.size() < capacity) {
-                waitingPerson.remove(i);
-                i = i - 1;
                 persons.add(pr);
+                waitingPerson.remove(i);
                 TimableOutput.println("IN-" + pr.getPrId()
                         + "-" + this.curFloor + "-" + this.id);
+                i = i - 1;
             }
         }
     }
@@ -202,10 +203,6 @@ public class Elevator implements Runnable {  //每个电梯一个线程
         for (int i = 0; i < persons.size(); i++) {
             Person pr = persons.get(i);
             if (pr.getShortTermDesti() == this.curFloor) {
-                persons.remove(i);
-                i = i - 1;
-                TimableOutput.println("OUT-" + pr.getPrId()
-                        + "-" + this.curFloor + "-" + this.id);
                 if (pr.getDesti() != this.curFloor) {
                     synchronized (waitTable) {
                         PersonRequest personRequest = new PersonRequest(this.curFloor,
@@ -216,6 +213,10 @@ public class Elevator implements Runnable {  //每个电梯一个线程
                         waitTable.notifyAll();
                     }
                 }
+                persons.remove(i);
+                TimableOutput.println("OUT-" + pr.getPrId()
+                        + "-" + this.curFloor + "-" + this.id);
+                i = i - 1;
             }
         }
     }
@@ -286,7 +287,6 @@ public class Elevator implements Runnable {  //每个电梯一个线程
     }
 
     private void maintain() {     //电梯维修
-
         if (!persons.isEmpty()) {
             synchronized (waitTable) {
                 while (waitTable.getCurFloorEleService(curFloor) > 3) {
@@ -303,20 +303,20 @@ public class Elevator implements Runnable {  //每个电梯一个线程
             open();
             for (int i = 0; i < persons.size(); i++) {
                 Person pr = persons.get(i);
-                persons.remove(i);
-                i = i - 1;
-                TimableOutput.println("OUT-" + pr.getPrId()
-                        + "-" + this.curFloor + "-" + this.id);
                 if (pr.getDesti() != curFloor) {
-                    PersonRequest newpr = new PersonRequest(curFloor,
-                            pr.getDesti(), pr.getPrId());
-                    Person person = new Person(newpr, newpr.getToFloor(), pr.getUsedElevator());
                     synchronized (waitTable) {
+                        PersonRequest newpr = new PersonRequest(curFloor,
+                                pr.getDesti(), pr.getPrId());
+                        Person person = new Person(newpr, newpr.getToFloor(), pr.getUsedElevator());
                         waitTable.addRequest(person);
                         waitTable.notifyAll();
                     }
                     //人员在当前楼层出去，并回归请求池
                 }
+                persons.remove(i);
+                TimableOutput.println("OUT-" + pr.getPrId()
+                        + "-" + this.curFloor + "-" + this.id);
+                i = i - 1;
             }
             close();
             synchronized (waitTable) {
@@ -325,14 +325,14 @@ public class Elevator implements Runnable {  //每个电梯一个线程
             }
         }
         for (int i = 0; i < waitingPerson.size(); i++) {
-            Person newperson = waitingPerson.get(i);
-            waitingPerson.remove(i);
-            i = i - 1;
-            PersonRequest newpr = new PersonRequest(this.curFloor,
-                    newperson.getDesti(), newperson.getPrId());
-            Person person = new Person(newpr, newpr.getToFloor(), newperson.getUsedElevator());
             synchronized (waitTable) {
+                Person newperson = waitingPerson.get(i);
+                PersonRequest newpr = new PersonRequest(newperson.getFrom(),  //没上电梯就保持原样
+                        newperson.getDesti(), newperson.getPrId());
+                Person person = new Person(newpr, newpr.getToFloor(), newperson.getUsedElevator());
                 waitTable.addRequest(person);
+                waitingPerson.remove(i);
+                i = i - 1;
             }
         }
         TimableOutput.println("MAINTAIN_ABLE-" + this.id);
