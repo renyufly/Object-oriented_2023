@@ -4,6 +4,7 @@ import com.oocourse.elevator3.MaintainRequest;
 import com.oocourse.elevator3.PersonRequest;
 import com.oocourse.elevator3.Request;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class InputThread implements Runnable {
 
@@ -26,7 +27,9 @@ public class InputThread implements Runnable {
                 /*     */
                 if (request instanceof PersonRequest) {   // a PersonRequest
                     synchronized (waitTable) {
-                        waitTable.addRequest((PersonRequest) request);
+                        PersonRequest request1 = (PersonRequest) request;
+                        Person pr = new Person(request1, request1.getToFloor(), new ArrayList<>());
+                        waitTable.addRequest(pr);
                         waitTable.notifyAll();
                     }
                 } else if (request instanceof ElevatorRequest) {   // an ElevatorRequest

@@ -214,7 +214,9 @@ public class Elevator implements Runnable {  //每个电梯一个线程
                     synchronized (waitTable) {
                         PersonRequest personRequest = new PersonRequest(this.curFloor,
                                 pr.getDesti(), pr.getPrId());
-                        waitTable.addRequest(personRequest);
+                        Person person = new Person(personRequest,
+                                personRequest.getToFloor(), pr.getUsedElevator());
+                        waitTable.addRequest(person);
                         waitTable.notifyAll();
                     }
                 }
@@ -312,8 +314,9 @@ public class Elevator implements Runnable {  //每个电梯一个线程
                 if (pr.getDesti() != curFloor) {
                     PersonRequest newpr = new PersonRequest(curFloor,
                             pr.getDesti(), pr.getPrId());
+                    Person person = new Person(newpr, newpr.getToFloor(), pr.getUsedElevator());
                     synchronized (waitTable) {
-                        waitTable.addRequest(newpr);
+                        waitTable.addRequest(person);
                         waitTable.notifyAll();
                     }
                     //人员在当前楼层出去，并回归请求池
@@ -331,8 +334,9 @@ public class Elevator implements Runnable {  //每个电梯一个线程
             i = i - 1;
             PersonRequest newpr = new PersonRequest(this.curFloor,
                     newperson.getDesti(), newperson.getPrId());
+            Person person = new Person(newpr, newpr.getToFloor(), newperson.getUsedElevator());
             synchronized (waitTable) {
-                waitTable.addRequest(newpr);
+                waitTable.addRequest(person);
             }
         }
         TimableOutput.println("MAINTAIN_ABLE-" + this.id);

@@ -1,9 +1,7 @@
-import com.oocourse.elevator3.PersonRequest;
-
 import java.util.ArrayList;
 
 public class WaitTable {     //候乘表
-    private ArrayList<PersonRequest> personRequests;    //总的请求队列
+    private ArrayList<Person> personRequests;    //总的请求队列
 
     private boolean isClose;             //是否输入关闭
     private int hasMaintain;
@@ -22,13 +20,13 @@ public class WaitTable {     //候乘表
         }
     }
 
-    public synchronized PersonRequest getRequest() {
-        PersonRequest pr = this.personRequests.get(0);
+    public synchronized Person getRequest() {
+        Person pr = this.personRequests.get(0);
         this.personRequests.remove(0);
         return pr;
     }
 
-    public synchronized void addRequest(PersonRequest pr) {            //请求池添加请求
+    public synchronized void addRequest(Person pr) {            //请求池添加请求
         personRequests.add(pr);
     }
 

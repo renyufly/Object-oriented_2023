@@ -1,4 +1,3 @@
-import com.oocourse.elevator3.PersonRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -36,32 +35,40 @@ public class Controller implements Runnable {     //管理当前运行的所有�
                 }
             }
             if (!waitTable.isEmpty()) {
-                PersonRequest personRequest = waitTable.getRequest();  //从主请求池获得一个请求
+                Person personRequest = waitTable.getRequest();  //从主请求池获得一个请求
                 /*    对该请求规划分配     */
                 ArrayList<ArrayList<Integer>> routes = new ArrayList<>();
                 ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
                 for (Integer key : elevators.keySet()) {
                     ArrayList<Integer> floorState = new ArrayList<>(); //0位为curFloor, 1位为destination
-                    floorState.add(personRequest.getFromFloor());
-                    floorState.add(personRequest.getToFloor());
+                    floorState.add(personRequest.getFrom());
+                    floorState.add(personRequest.getDesti());
                     findPath(floorState, elevators.get(key),
                             new ArrayList<>(), new ArrayList<>(),
                             paths, routes, new HashMap<>(), new ArrayList<>());
+                }
+
+                for (int i = 0; i < routes.size(); i++) {
+                    if (personRequest.isUsedEle(routes.get(i))) {
+                        routes.remove(i);
+                        paths.remove(i);
+                        i = i - 1;
+                    }
                 }
                 ArrayList<Integer> minRoute = routes.get(0);
                 ArrayList<Integer> minPath = paths.get(0);
                 for (int i = 1; i < routes.size(); i++) {
                     if ((routes.get(i).size() <= minRoute.size()) ||
                             elevators.get(routes.get(i).get(0)).getWaitingNumber()
-                            < elevators.get(minRoute.get(0)).getWaitingNumber()) {
+                                    < elevators.get(minRoute.get(0)).getWaitingNumber()) {
                         minRoute = routes.get(i);
                         minPath = paths.get(i);
                     }
                 }
-
-                Person person = new Person(personRequest, minPath.get(1));
+                personRequest.setShortTermDesti(minPath.get(1));
+                personRequest.addUsedEleva(elevators.get(minRoute.get(0)).getId());
                 minPath.remove(0);
-                elevators.get(minRoute.get(0)).setWaitingPerson(person);
+                elevators.get(minRoute.get(0)).setWaitingPerson(personRequest);
                 synchronized (waitTable) {
                     waitTable.notifyAll();
                 }
@@ -98,7 +105,7 @@ public class Controller implements Runnable {     //管理当前运行的所有�
                     if (!usedEleva.containsKey(key)) {
                         floorState.set(0, i);
                         findPath(floorState, elevators.get(key), currentPath,
-                            currentRoute, allPaths, allRoutes, usedEleva, usedFloor);
+                                currentRoute, allPaths, allRoutes, usedEleva, usedFloor);
                         currentRoute.remove(currentRoute.size() - 1);
                         currentPath.remove(currentPath.size() - 1);
                     }
