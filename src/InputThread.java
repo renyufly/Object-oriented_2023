@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class InputThread implements Runnable {
-
     private WaitTable waitTable;
     private Controller controller;
 

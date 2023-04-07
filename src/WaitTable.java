@@ -2,11 +2,11 @@ import java.util.ArrayList;
 
 public class WaitTable {     //候乘表
     private ArrayList<Person> personRequests;    //总的请求队列
-
     private boolean isClose;             //是否输入关闭
     private int hasMaintain;
     private ArrayList<Integer> elevaServiceEachFloor;     //每层楼的服务中电梯数量
     private ArrayList<Integer> elevaPickupEachFloor;      //每层楼服务中且只接人的电梯数量
+    private boolean allClear;                    //所有电梯舱没有人，舱外无等人
 
     public WaitTable() {
         this.personRequests = new ArrayList<>();
@@ -18,6 +18,15 @@ public class WaitTable {     //候乘表
             elevaServiceEachFloor.add(0);
             elevaPickupEachFloor.add(0);
         }
+        this.allClear = false;
+    }
+
+    public synchronized void setAllClear() {
+        this.allClear = true;
+    }
+
+    public synchronized boolean getAllClear() {
+        return this.allClear;
     }
 
     public synchronized Person getRequest() {
@@ -90,5 +99,4 @@ public class WaitTable {     //候乘表
             elevaServiceEachFloor.set(curFloor - 1, tmp);
         }
     }
-
 }

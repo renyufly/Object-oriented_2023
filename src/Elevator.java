@@ -72,9 +72,10 @@ public class Elevator implements Runnable {  //每个电梯一个线程
                     break;       //结束线程
                 }
             }
-            if (persons.isEmpty() && waitingPerson.isEmpty()) {
+            if (waitTable.isEmpty() && persons.isEmpty() && waitingPerson.isEmpty()) {
                 synchronized (waitTable) {
-                    if (waitTable.getIsClose() && (waitTable.getHasMaintain() == 0)) {
+                    if (waitTable.getIsClose() && (waitTable.getHasMaintain() == 0)
+                            && waitTable.getAllClear()) {
                         break;       //结束线程
                     }
                     try {
@@ -84,8 +85,10 @@ public class Elevator implements Runnable {  //每个电梯一个线程
                     }
                 }
             } else if (persons.isEmpty()) {
-                this.destinateFloor = waitingPerson.get(0).getFrom();
-                setDirection();
+                if (!waitingPerson.isEmpty()) {
+                    this.destinateFloor = waitingPerson.get(0).getFrom();
+                    setDirection();
+                }
             } else {      //请求池不为空且自己候选池不为空
                 this.destinateFloor = persons.get(0).getShortTermDesti();
                 setDirection();
@@ -104,18 +107,7 @@ public class Elevator implements Runnable {  //每个电梯一个线程
                 if (isGetOn() && !isGetOff()) {  //只接人
                     onlyPickUp();
                 } else {
-                    synchronized (waitTable) {
-                        waitTable.setElevaServiceEachFloor(true, curFloor);
-                    }
-                    open();
-                    getOn();
-                    getOff();
-                    close();
-                    synchronized (waitTable) {
-                        waitTable.setElevaServiceEachFloor(false, curFloor);
-                        waitTable.notifyAll();
-                    }
-                    move();
+                    elsePickUpDown();
                 }
             } else {
                 move();
@@ -130,7 +122,11 @@ public class Elevator implements Runnable {  //每个电梯一个线程
     }
 
     public int getLoadPerson() {
-        return this.persons.size();
+        if (persons.isEmpty()) {
+            return 0;
+        } else {
+            return this.persons.size();
+        }
     }
 
     public int getCapacity() {
@@ -367,4 +363,18 @@ public class Elevator implements Runnable {  //每个电梯一个线程
         move();
     }
 
+    private void elsePickUpDown() {
+        synchronized (waitTable) {
+            waitTable.setElevaServiceEachFloor(true, curFloor);
+        }
+        open();
+        getOn();
+        getOff();
+        close();
+        synchronized (waitTable) {
+            waitTable.setElevaServiceEachFloor(false, curFloor);
+            waitTable.notifyAll();
+        }
+        move();
+    }
 }

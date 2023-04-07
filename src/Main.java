@@ -4,7 +4,6 @@ import java.util.HashMap;
 public class Main {
     public static void main(String[] args) throws Exception {
         TimableOutput.initStartTimestamp();  // 初始化时间戳
-
         WaitTable waitTable = new WaitTable();
         Controller controller = new Controller(waitTable);
         HashMap<Integer, Thread> elevatorThread = new HashMap<>();
