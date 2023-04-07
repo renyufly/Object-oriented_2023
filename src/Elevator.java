@@ -90,7 +90,7 @@ public class Elevator implements Runnable {  //每个电梯一个线程
                 setDirection();
             }
             /*     电梯上下人          */
-            if (isGetOn() || isGetOff()) {
+            if (isGetOn() || isGetOff() && isAccess(curFloor)) {
                 synchronized (waitTable) {
                     while (waitTable.getCurFloorEleService(curFloor) > 3) {
                         try {
