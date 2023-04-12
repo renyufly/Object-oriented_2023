@@ -66,8 +66,8 @@ public class Controller implements Runnable {     //管理当前运行的所有�
                     ArrayList<Integer> minPath = paths.get(0);
                     for (int i = 1; i < routes.size(); i++) {
                         if ((routes.get(i).size() <= minRoute.size()) ||
-                                elevators.get(routes.get(i).get(0)).getWaitingNumber()
-                                        < elevators.get(minRoute.get(0)).getWaitingNumber()) {
+                                (elevators.get(routes.get(i).get(0)).getWaitingNumber()
+                                        < elevators.get(minRoute.get(0)).getWaitingNumber())) {
                             minRoute = routes.get(i);
                             minPath = paths.get(i);
                         }
@@ -102,27 +102,29 @@ public class Controller implements Runnable {     //管理当前运行的所有�
             currentPath.remove(currentPath.size() - 1);
             return;
         }
-        usedFloor.add(floorState.get(0));
-        usedEleva.put(curEleva.getId(), curEleva);
-        for (int i = 1; i <= 11; i++) {
-            if (!usedFloor.contains(i) && curEleva.isAccess(i)) {
-                Iterator iter = elevators.keySet().iterator();
-                while (iter.hasNext()) {
-                    Integer key = (Integer) iter.next();
-                    Iterator<Integer> integerIterator = usedEleva.keySet().iterator();
-                    int flag1 = 0;
-                    while (integerIterator.hasNext()) {
-                        if (usedEleva.get(integerIterator.next()) == usedEleva.get(key)) {
-                            flag1 = 1;
-                            break;
+        synchronized (waitTable) {
+            usedFloor.add(floorState.get(0));
+            usedEleva.put(curEleva.getId(), curEleva);
+            for (int i = 1; i <= 11; i++) {
+                if (!usedFloor.contains(i) && curEleva.isAccess(i)) {
+                    Iterator iter = elevators.keySet().iterator();
+                    while (iter.hasNext()) {
+                        Integer key = (Integer) iter.next();
+                        Iterator<Integer> integerIterator = usedEleva.keySet().iterator();
+                        int flag1 = 0;
+                        while (integerIterator.hasNext()) {
+                            if (usedEleva.get(integerIterator.next()) == usedEleva.get(key)) {
+                                flag1 = 1;
+                                break;
+                            }
                         }
-                    }
-                    if (flag1 == 0) {
-                        floorState.set(0, i);
-                        findPath(floorState, elevators.get(key), currentPath,
-                                currentRoute, allPaths, allRoutes, usedEleva, usedFloor);
-                        currentRoute.remove(currentRoute.size() - 1);
-                        currentPath.remove(currentPath.size() - 1);
+                        if (flag1 == 0) {
+                            floorState.set(0, i);
+                            findPath(floorState, elevators.get(key), currentPath,
+                                    currentRoute, allPaths, allRoutes, usedEleva, usedFloor);
+                            currentRoute.remove(currentRoute.size() - 1);
+                            currentPath.remove(currentPath.size() - 1);
+                        }
                     }
                 }
             }
