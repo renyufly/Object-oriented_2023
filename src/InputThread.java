@@ -36,12 +36,14 @@ public class InputThread implements Runnable {
                     ElevatorRequest req = (ElevatorRequest) request;
                     Elevator elevator = new Elevator(req.getElevatorId(), waitTable,
                             req.getFloor(), req.getCapacity(), req.getSpeed(), req.getAccess());
-                    controller.addElevator(elevator.getId(), elevator);
+                    synchronized (waitTable) {
+                        controller.addElevator(elevator.getId(), elevator);
+                    }
                     Thread ethread = new Thread(elevator);
                     ethread.start();
                 } else if (request instanceof MaintainRequest) {   // an MaintainRequest
-                    controller.maintainEleva(((MaintainRequest) request).getElevatorId());
                     synchronized (waitTable) {
+                        controller.maintainEleva(((MaintainRequest) request).getElevatorId());
                         waitTable.notifyAll();
                         waitTable.setHasMaintain(0);
                     }
