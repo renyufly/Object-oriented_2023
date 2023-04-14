@@ -48,6 +48,7 @@ public class Controller implements Runnable {     //管理当前运行的所有�
                         e.printStackTrace();
                     }
                 }
+            }
 
                 if (!waitTable.isEmpty()) {
                     Person personRequest = waitTable.getRequest();  //从主请求池获得一个请求
@@ -65,9 +66,8 @@ public class Controller implements Runnable {     //管理当前运行的所有�
                     ArrayList<Integer> minRoute = routes.get(0);
                     ArrayList<Integer> minPath = paths.get(0);
                     for (int i = 1; i < routes.size(); i++) {
-                        if ((routes.get(i).size() <= minRoute.size()) ||
-                                (elevators.get(routes.get(i).get(0)).getWaitingNumber()
-                                        < elevators.get(minRoute.get(0)).getWaitingNumber())) {
+                        if (((routes.get(i).size() <= minRoute.size()) && elevators.get(routes.get(i).get(0)).getWaitingNumber()
+                                < elevators.get(minRoute.get(0)).getWaitingNumber()) ) {
                             minRoute = routes.get(i);
                             minPath = paths.get(i);
                         }
@@ -81,7 +81,6 @@ public class Controller implements Runnable {     //管理当前运行的所有�
                     }
                     minRoute.remove(0);
                 }
-            }
         }
     }
 
