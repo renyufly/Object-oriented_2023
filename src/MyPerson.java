@@ -146,4 +146,11 @@ public class MyPerson implements Person {
         }
     }
 
+    public int queryIdValue(int id) {
+        if (value.containsKey(id)) {
+            return this.value.get(id);
+        }
+        return 609090909;  //
+    }
+
 }

@@ -479,7 +479,7 @@ public class MyNetwork implements Network {
         if (!contains(id)) {     //求最小带权环路的总权值（起终点均为getPerson(id)）
             throw new MyPersonIdNotFoundException(id);
         } else {
-            Qlm qlm = new Qlm(this.peopleGraph);
+            Qlm qlm = new Qlm(this.peopleId, this.people);
             int ret = qlm.queryLm(id);
             this.peopleGraph.reset();
             if (ret == 609090909) {

@@ -1,4 +1,7 @@
+import com.oocourse.spec3.main.Person;
+
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 
@@ -7,18 +10,20 @@ public class Qlm {
     private HashMap<Integer, Integer> dis;   //记录节点到起始节点的最短距离 (Id-距离)
     private HashMap<Integer, Integer> pre;   //记录最短路径下该节点的前驱节点 (Id-前驱结点Id)
     private HashMap<Integer, Boolean> vis;   //标记节点是否已经在队列中 (Id-判断)
-    private Graph graph;    //图--邻接表
+    // private Graph graph;    //图--邻接表
+    private ArrayList<Integer> peopleId;     //记录人的Id
+    private HashMap<Integer, Person> people;
 
-    public Qlm(Graph graph) {
-        this.graph = graph;
+    public Qlm(ArrayList<Integer> peopleId, HashMap<Integer, Person> people) {
         this.dis = new HashMap<>();
         this.pre = new HashMap<>();
         this.vis = new HashMap<>();
-        this.graph.initialSet();
+        this.peopleId = peopleId;
+        this.people = people;
     }
 
     public void spfa(int s) {   //最短路径计算
-        for (Integer nodeId : this.graph.getNodesId()) {
+        for (Integer nodeId : this.peopleId) {
             dis.put(nodeId, INF);
             pre.put(nodeId, nodeId);
             vis.put(nodeId, false);
@@ -39,9 +44,10 @@ public class Qlm {
             vis.put(u, false);
             cnt--;
             sum -= dis.get(u);
-            for (Integer nodeId : this.graph.getNodesId()) {
-                if (dis.get(u) + this.graph.getEdgeWeight(u, nodeId) < dis.get(nodeId)) {
-                    int tmp = dis.get(u) + this.graph.getEdgeWeight(u, nodeId);
+            for (Integer nodeId : this.peopleId) {
+                if (dis.get(u) + ((MyPerson)this.people.get(nodeId)).queryIdValue(u)
+                        < dis.get(nodeId)) {
+                    int tmp = dis.get(u) + ((MyPerson)this.people.get(nodeId)).queryIdValue(u);
                     dis.put(nodeId, tmp);
                     if (u != s) {
                         pre.put(nodeId, u);
@@ -65,18 +71,18 @@ public class Qlm {
     public int queryLm(int id) {
         int ans = 609090909;
         spfa(id);
-
         // 计算每个起始节点到其他节点的最短路径
-        for (Integer nodeId : this.graph.getNodesId()) {
+        for (Integer nodeId : this.peopleId) {
             if (pre.get(nodeId) != nodeId) {
-                ans = Math.min(ans, this.graph.getEdgeWeight(id, nodeId) + dis.get(nodeId));
+                ans = Math.min(ans, ((MyPerson)this.people.get(id)).queryIdValue(nodeId)
+                        + dis.get(nodeId));
             }
         }
-        for (Integer nodeId : this.graph.getNodesId()) {
-            for (Integer jid : this.graph.getNodesId()) {
+        for (Integer nodeId : this.peopleId) {
+            for (Integer jid : this.peopleId) {
                 if (nodeId != id && jid != id && findx(nodeId) != findx(jid)) {
                     ans = Math.min(ans, dis.get(nodeId) + dis.get(jid)
-                            + this.graph.getEdgeWeight(nodeId, jid));
+                            + ((MyPerson)this.people.get(nodeId)).queryIdValue(jid));
                 }
             }
         }
