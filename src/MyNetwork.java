@@ -100,11 +100,9 @@ public class MyNetwork implements Network {
         ((MyPerson) getPerson(id2)).addValue(id1, value);
         peopleGraph.addEdge((getPerson(id1)).getId(), getPerson(id2).getId(), value);
         peopleGraph.addEdge(getPerson(id2).getId(), (getPerson(id1)).getId(), value);
-        int tmp1 = degree.get(id1);
-        tmp1++;
+        int tmp1 = degree.get(id1) + 1;
         degree.put(id1, tmp1);
-        int tmp2 = degree.get(id2);
-        tmp2++;
+        int tmp2 = degree.get(id2) + 1;
         degree.put(id2, tmp2);
         disjointSet.addBackUp(id1, id2);
         if (disjointSet.merge(id1, id2) == 0) {   //修改block_sum
@@ -129,12 +127,14 @@ public class MyNetwork implements Network {
             int newValue = getPerson(id1).queryValue(getPerson(id2)) + value;
             ((MyPerson) getPerson(id1)).addValue(id2, newValue);
             ((MyPerson) getPerson(id2)).addValue(id1, newValue);
+            this.peopleGraph.modifyEdgeWeight(id1, id2, value);//维护图
+            this.peopleGraph.modifyEdgeWeight(id2, id1, value);
         } else {    //删关系（删边）
             ((MyPerson) getPerson(id1)).removeRelation(id2);
             ((MyPerson) getPerson(id2)).removeRelation(id1);
             int tmp = this.peopleId.size();
             this.blocknum = disjointSet.remove(id1, id2, tmp, peopleId);
-            this.peopleGraph.deleteEdge(id1, id2);
+            this.peopleGraph.deleteEdge(id1, id2);   //维护图
             this.peopleGraph.deleteEdge(id2, id1);
         }
     }

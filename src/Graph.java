@@ -5,7 +5,7 @@ import java.util.LinkedList;
 public class Graph {   //带权无向图---邻接表
     private ArrayList<Integer> nodes;     //所有结点Id集合
     private HashMap<Integer, LinkedList<Node>> adjacencyMatrix;  //邻接表最左侧所有结点,每个结点有个链表 (Id-链表)
-    private HashMap<Integer, LinkedList<Integer>> adjacencyIndex;
+    private HashMap<Integer, LinkedList<Integer>> adjacencyIndex; //邻接表，但存的是Id不是结点
     private ArrayList<Node> nodeArray;   //所有结点集合
 
     public Graph() {
@@ -84,6 +84,17 @@ public class Graph {   //带权无向图---邻接表
             if (adjacencyMatrix.get(fromId).get(i).getId() == toId) {
                 adjacencyMatrix.get(fromId).remove(i);
                 adjacencyIndex.get(fromId).remove(i);
+                return;
+            }
+        }
+    }
+
+    public void modifyEdgeWeight(int fromId, int toId, int weight) {
+        for (int i = 0; i < adjacencyMatrix.get(fromId).size(); i++) {
+            if (adjacencyMatrix.get(fromId).get(i).getId() == toId) {
+                Node node = new Node(toId, adjacencyMatrix.get(fromId).get(i).getWeight() + weight);
+                adjacencyMatrix.get(fromId).remove(i);    //修改对应toId的结点的权值
+                adjacencyMatrix.get(fromId).add(i, node);
                 return;
             }
         }

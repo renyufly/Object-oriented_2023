@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class Qlm {
     private static final int INF = 609090909;
     private HashMap<Integer, Integer> dis;   //记录节点到起始节点的最短距离 (Id-距离)
-    private HashMap<Integer, Integer> pre;   //记录节点的前驱节点 (Id-前驱结点Id)
+    private HashMap<Integer, Integer> pre;   //记录最短路径下该节点的前驱节点 (Id-前驱结点Id)
     private HashMap<Integer, Boolean> vis;   //标记节点是否已经在队列中 (Id-判断)
     private Graph graph;    //图--邻接表
 
