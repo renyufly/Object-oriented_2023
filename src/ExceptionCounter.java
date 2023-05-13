@@ -12,6 +12,7 @@ public class ExceptionCounter {   //异常计数类
         peopleCount = new HashMap<>();
         groupCount = new HashMap<>();
         messageCount = new HashMap<>();
+        emojiCount = new HashMap<>();
     }
 
     // 计数（++）
