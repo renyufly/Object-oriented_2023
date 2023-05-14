@@ -79,8 +79,8 @@ public class Qlm {
             }
         }
         for (Integer nodeId : this.peopleId) {
-            for (Integer jid : this.peopleId) {
-                if (nodeId != id && jid != id && findx(nodeId) != findx(jid)) {
+            for (Integer jid : ((MyPerson)this.people.get(nodeId)).getValue().keySet()) {
+                if (nodeId != id && jid != id && find(nodeId) != find(jid)) {
                     ans = Math.min(ans, dis.get(nodeId) + dis.get(jid)
                             + ((MyPerson)this.people.get(nodeId)).queryIdValue(jid));
                 }
@@ -97,6 +97,20 @@ public class Qlm {
             pre.put(x, findx(pre.get(x)));
             return pre.get(x);
         }
+    }
+
+    public int find(int id) {
+        int rep = id;         //代表元素
+        while (rep != pre.get(rep)) {
+            rep = pre.get(rep);
+        }
+        int now = id;
+        while (now != rep) {
+            int fa = pre.get(now);
+            pre.put(now, rep);
+            now = fa;
+        }
+        return rep;
     }
 
 }
