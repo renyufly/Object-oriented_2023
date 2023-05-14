@@ -29,8 +29,8 @@ public class Dceok {
         for (Integer emojiId : afterEmoji.keySet()) {
             int flag = 0;
             for (Integer eid : beforeEmoji.keySet()) {
-                if (emojiId == eid && afterEmoji.get(emojiId) == beforeEmoji.get(eid)) {
-                    flag = 1;
+                if ((emojiId == eid) && afterEmoji.get(emojiId).equals(beforeEmoji.get(eid))) {
+                    flag = 1; //两个Integer型不能直接==，要么转int要么equals
                     break;
                 }
             }
