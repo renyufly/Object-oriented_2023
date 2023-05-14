@@ -1,5 +1,3 @@
-import javafx.util.Pair;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,7 +7,7 @@ public class DisjointSet {   //并查集算法——检查图的连通性
     private HashMap<Integer, Integer> pre;    //存储结点的父子关系
     private HashMap<Integer, Integer> rank;     // 在“按秩合并”里用到
 
-    private final HashSet<Pair<Integer, Integer>> backup;  //对应边关系
+    private final HashSet<HashMap<Integer, Integer>> backup;  //对应边关系
 
     public DisjointSet() {
         this.pre = new HashMap<>(4096);
@@ -47,7 +45,11 @@ public class DisjointSet {   //并查集算法——检查图的连通性
             curId1 = curId2;
             curId2 = tmp;
         }
-        backup.add(new Pair<>(curId1, curId2));
+        //
+        HashMap edge = new HashMap<>();
+        edge.put(curId1, curId2);
+        backup.add(edge);
+        //backup.add(new (curId1, curId2));
     }
 
     public int merge(int id1, int id2) {
@@ -82,16 +84,21 @@ public class DisjointSet {   //并查集算法——检查图的连通性
             curId1 = curId2;
             curId2 = tmp;
         }
-        backup.remove(new Pair<>(curId1, curId2));
-        for (Pair pair : backup) {
-            if (merge((Integer) pair.getKey(), (Integer) pair.getValue()) == 0) {
-                blocksum--;
+        HashMap edge = new HashMap<>();
+        edge.put(curId1, curId2);
+        backup.remove(edge);
+        //backup.remove(new Pair<>(curId1, curId2));
+        for (HashMap<Integer, Integer> pair : backup) {
+            for (Integer key: pair.keySet()) {
+                if (merge(key, pair.get(key)) == 0) {
+                    blocksum--;
+                }
             }
         }
         return blocksum;
     }
 
-    public HashSet<Pair<Integer, Integer>> getBackup() {
+    public HashSet<HashMap<Integer, Integer>> getBackup() {
         return this.backup;
     }
 }

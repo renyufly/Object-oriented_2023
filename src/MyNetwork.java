@@ -30,7 +30,7 @@ public class MyNetwork implements Network {
     private HashMap<Integer, Integer> emojiIdList;   //emoji-Id (键为id，存也是id)
     private HashMap<Integer, Integer> emojiHeatList;  //(键为id,值为对应emojiID的热度)
     private ArrayList<Integer> emojiId;
-    private Graph peopleGraph;
+    //private Graph peopleGraph;
     private HashMap<Integer, Integer> degree;  //每个结点度数。前ID，后度数
     private HashMap<Integer, Integer> visitTime;  //节点被访问的时间. 前ID，后对应Id的时间
     private HashMap<Integer, ArrayList<Integer>> enode;   //无向图中每个节点的邻接节点集合
@@ -46,7 +46,7 @@ public class MyNetwork implements Network {
         this.emojiIdList = new HashMap<>();
         this.emojiHeatList = new HashMap<>();
         this.emojiId = new ArrayList<>();
-        peopleGraph = new Graph();    //
+        //peopleGraph = new Graph();    //
         degree = new HashMap<>();
         visitTime = new HashMap<>();
         enode = new HashMap<>();
@@ -77,7 +77,7 @@ public class MyNetwork implements Network {
         this.people.put(person.getId(), person);
         this.peopleId.add(person.getId());
         personArray.add(person);
-        peopleGraph.addNode(person.getId());
+        //peopleGraph.addNode(person.getId());
         degree.put(person.getId(), 0);
         disjointSet.add(person.getId());  //并查集添加元素
         blocknum++;     //
@@ -98,8 +98,8 @@ public class MyNetwork implements Network {
         ((MyPerson) getPerson(id1)).addValue(id2, value);
         ((MyPerson) getPerson(id2)).addAcquain(getPerson(id1));
         ((MyPerson) getPerson(id2)).addValue(id1, value);
-        peopleGraph.addEdge((getPerson(id1)).getId(), getPerson(id2).getId(), value);
-        peopleGraph.addEdge(getPerson(id2).getId(), (getPerson(id1)).getId(), value);
+        //peopleGraph.addEdge((getPerson(id1)).getId(), getPerson(id2).getId(), value);
+        //peopleGraph.addEdge(getPerson(id2).getId(), (getPerson(id1)).getId(), value);
         int tmp1 = degree.get(id1) + 1;
         degree.put(id1, tmp1);
         int tmp2 = degree.get(id2) + 1;
@@ -127,15 +127,15 @@ public class MyNetwork implements Network {
             int newValue = getPerson(id1).queryValue(getPerson(id2)) + value;
             ((MyPerson) getPerson(id1)).addValue(id2, newValue);
             ((MyPerson) getPerson(id2)).addValue(id1, newValue);
-            this.peopleGraph.modifyEdgeWeight(id1, id2, value);//维护图
-            this.peopleGraph.modifyEdgeWeight(id2, id1, value);
+            //this.peopleGraph.modifyEdgeWeight(id1, id2, value);//维护图
+            //this.peopleGraph.modifyEdgeWeight(id2, id1, value);
         } else {    //删关系（删边）
             ((MyPerson) getPerson(id1)).removeRelation(id2);
             ((MyPerson) getPerson(id2)).removeRelation(id1);
             int tmp = this.peopleId.size();
             this.blocknum = disjointSet.remove(id1, id2, tmp, peopleId);
-            this.peopleGraph.deleteEdge(id1, id2);   //维护图
-            this.peopleGraph.deleteEdge(id2, id1);
+            //this.peopleGraph.deleteEdge(id1, id2);   //维护图
+            //this.peopleGraph.deleteEdge(id2, id1);
         }
     }
 
@@ -481,7 +481,7 @@ public class MyNetwork implements Network {
         } else {
             Qlm qlm = new Qlm(this.peopleId, this.people);
             int ret = qlm.queryLm(id);
-            this.peopleGraph.reset();
+            //this.peopleGraph.reset();
             if (ret == 609090909) {
                 throw new MyPathNotFoundException(id);
             } else {

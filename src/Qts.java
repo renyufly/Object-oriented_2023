@@ -1,5 +1,3 @@
-import javafx.util.Pair;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -13,15 +11,18 @@ public class Qts {
     private HashMap<Integer, ArrayList<Integer>> enode;   //无向图中每个节点的邻接节点集合
 
     public Qts(HashMap<Integer, Integer> degree, HashMap<Integer, Integer> visitTime,
-               HashMap<Integer, ArrayList<Integer>> enode, HashSet<Pair<Integer, Integer>> backup) {
+               HashMap<Integer, ArrayList<Integer>> enode,
+               HashSet<HashMap<Integer, Integer>> backup) {
         this.degree = degree;
         this.visitTime = visitTime;
         this.enode = enode;
         this.startEdge = new ArrayList<>();
         this.endEdge = new ArrayList<>();
-        for (Pair pair : backup) {
-            this.startEdge.add((Integer) pair.getKey());
-            this.endEdge.add((Integer) pair.getValue());
+        for (HashMap<Integer, Integer> pair : backup) {
+            for (Integer key: pair.keySet()) {
+                this.startEdge.add(key);
+                this.endEdge.add(pair.get(key));
+            }
         }
     }
 
