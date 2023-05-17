@@ -77,15 +77,23 @@ public class Qlm {
                 ans = Math.min(ans, ((MyPerson)this.people.get(id)).queryIdValue(nodeId)
                         + dis.get(nodeId));
             }
+            if (nodeId != id) {
+                for (Integer jid : ((MyPerson)this.people.get(nodeId)).getValue().keySet()) {
+                    if (jid != id && find(nodeId) != find(jid)) {
+                        ans = Math.min(ans, dis.get(nodeId) + dis.get(jid)
+                                + ((MyPerson)this.people.get(nodeId)).queryIdValue(jid));
+                    }
+                }
+            }
         }
-        for (Integer nodeId : this.peopleId) {
+        /* for (Integer nodeId : this.peopleId) {
             for (Integer jid : ((MyPerson)this.people.get(nodeId)).getValue().keySet()) {
                 if (nodeId != id && jid != id && find(nodeId) != find(jid)) {
                     ans = Math.min(ans, dis.get(nodeId) + dis.get(jid)
                             + ((MyPerson)this.people.get(nodeId)).queryIdValue(jid));
                 }
             }
-        }
+        }*/
 
         return ans;
     }
