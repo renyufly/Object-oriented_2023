@@ -45,10 +45,9 @@ public class Qlm {
             cnt--;
             sum -= dis.get(u);
             for (Integer nodeId : ((MyPerson)this.people.get(u)).getValue().keySet()) { //只遍历熟人(边)
-                int value = ((MyPerson)this.people.get(nodeId)).queryIdValue(u);
-                if (dis.get(u) + value
+                if (dis.get(u) + ((MyPerson)this.people.get(nodeId)).queryIdValue(u)
                         < dis.get(nodeId)) {
-                    int tmp = dis.get(u) + value;
+                    int tmp = dis.get(u) + ((MyPerson)this.people.get(nodeId)).queryIdValue(u);
                     dis.put(nodeId, tmp);
                     if (u != s) {
                         pre.put(nodeId, u);
@@ -67,8 +66,6 @@ public class Qlm {
                 }
             }
         }
-        dis.entrySet().removeIf(integerIntegerEntry ->
-                integerIntegerEntry.getValue().equals(INF));
     }
 
     public int queryLm(int id) {
@@ -76,29 +73,19 @@ public class Qlm {
         spfa(id);
         // 计算每个起始节点到其他节点的最短路径
         for (Integer nodeId : this.peopleId) {
-            int value =  ((MyPerson)this.people.get(id)).queryIdValue(nodeId);
             if (pre.get(nodeId) != nodeId) {
-                ans = Math.min(ans, value
+                ans = Math.min(ans, ((MyPerson)this.people.get(id)).queryIdValue(nodeId)
                         + dis.get(nodeId));
             }
-            if (nodeId != id) {
-                MyPerson thisPerson = ((MyPerson)this.people.get(nodeId));
-                for (Integer jid : thisPerson.getValue().keySet()) {
-                    if (jid != id && find(nodeId) != find(jid)) {
-                        ans = Math.min(ans, dis.get(nodeId) + dis.get(jid)
-                                + thisPerson.queryIdValue(jid));
-                    }
-                }
-            }
         }
-        /* for (Integer nodeId : this.peopleId) {
+        for (Integer nodeId : this.peopleId) {
             for (Integer jid : ((MyPerson)this.people.get(nodeId)).getValue().keySet()) {
                 if (nodeId != id && jid != id && find(nodeId) != find(jid)) {
                     ans = Math.min(ans, dis.get(nodeId) + dis.get(jid)
                             + ((MyPerson)this.people.get(nodeId)).queryIdValue(jid));
                 }
             }
-        }*/
+        }
 
         return ans;
     }
