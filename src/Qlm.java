@@ -44,7 +44,7 @@ public class Qlm {
             vis.put(u, false);
             cnt--;
             sum -= dis.get(u);
-            for (Integer nodeId : this.peopleId) {
+            for (Integer nodeId : ((MyPerson)this.people.get(u)).getValue().keySet()) { //只遍历熟人(边)
                 int value = ((MyPerson)this.people.get(nodeId)).queryIdValue(u);
                 if (dis.get(u) + value
                         < dis.get(nodeId)) {
@@ -67,6 +67,8 @@ public class Qlm {
                 }
             }
         }
+        dis.entrySet().removeIf(integerIntegerEntry ->
+                integerIntegerEntry.getValue().equals(INF));
     }
 
     public int queryLm(int id) {
