@@ -103,6 +103,8 @@ public class OrderLibrarian {   //预定管理员
                         "-" + bookNum + " to " + stuid);
                 System.out.println("(State) " + nowTime + " " + bookNum +
                          " transfers from normal to borrowedOrder"); //
+                System.out.println("(Sequence) " + nowTime +
+                        " OrderLibrarian sends a message to OrderLibrarian"); //
                 System.out.println(nowTime + " " + stuid + " borrowed " + stuid.split("-")[0] +
                         "-" + bookNum + " from ordering librarian");
                 students.get(stuid).addOwnBooks(bookNum, stuid.split("-")[0], 2);

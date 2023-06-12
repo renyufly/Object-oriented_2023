@@ -61,8 +61,10 @@ public class Main {
                 if (operation.equals("borrowed")) {  // 借书
                     System.out.println(curDate + " " + studentId + " queried " +
                             bookNumber + " from self-service machine");
+                    orderNewBook(nowTime);  //
                     System.out.println(curDate +
                             " self-service machine provided information of " + bookNumber);
+                    queryBookMessage(nowTime);  //
                     boolean ret = curLib.querySelfMachine(nowTime, bookNumber,
                             studentId, schoolName);
                     if (ret == false) {
@@ -91,6 +93,14 @@ public class Main {
             }  //处理当天请求
             date = date.plusDays(1);
         }
+    }
+
+    public static void orderNewBook(String nowTime) {
+        System.out.println("(Sequence) " + nowTime +  " Main sends a message to Main");
+    }
+
+    public static void queryBookMessage(String nowTime) {
+        System.out.println("(Sequence) " + nowTime +  " Main sends a message to Main");
     }
 
     public static void arrange(HashMap<String, Library> libHashMap, String curDate,
@@ -181,6 +191,7 @@ public class Main {
                     System.out.println(ret.split(" ")[0] +
                             " ordering librarian recorded " +
                             ret.split(" ")[1] + "'s order of " + ret.split(" ")[3]);
+                    getOrderedBook(ret.split(" ")[0]);  //
                     orderMessage.remove(q);
                     q--;
                 }
@@ -189,6 +200,10 @@ public class Main {
         for (int k = 0; k < outTransMessage.size(); k++) {  //输出校际转运输出
             System.out.println(outTransMessage.get(k));
         }
+    }
+
+    public static void getOrderedBook(String nowTime) {
+        System.out.println("(Sequence) " + nowTime + " Main sends a message to Main");  //
     }
 
 }

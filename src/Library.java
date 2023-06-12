@@ -103,6 +103,8 @@ public class Library {    //图书馆
                         bookNum.split(" ")[0] + "-" + bookNum.split(" ")[1] + " to " + stuId);
                 System.out.println("(State) " + nowTime + " " + bookNum.split(" ")[1] +
                         " transfers from normal to borrowedPurchase"); //
+                System.out.println("(Sequence) " + nowTime + " Library sends" +
+                        " a message to Library");  //
                 System.out.println(nowTime + " " + stuId + " borrowed " + bookNum.split(" ")[0] +
                         "-" + bookNum.split(" ")[1] + " from purchasing department");
                 if (bookNum.split(" ")[1].charAt(0) == 'B') {  //是B类书
@@ -161,6 +163,8 @@ public class Library {    //图书馆
                             schoolName + "-" + bookNumber + " to " + stuId);
                     System.out.println("(State) " + nowTime + " " + bookNumber +
                             " transfers from normal to borrowed"); //
+                    System.out.println("(Sequence) " + nowTime + " Main sends" +
+                            " a message to Library");  //
                     System.out.println(nowTime + " " + stuId + " borrowed " + schoolName + "-"
                             + bookNumber + " from borrowing and returning librarian");
                     orderLibrarian.clearBbookReq(stuId, students.get(stuId), libManage); //预定清除B类请求
@@ -171,6 +175,8 @@ public class Library {    //图书馆
                             "lending " + schoolName + "-" + bookNumber + " to " + stuId);
                     System.out.println("(State) " + nowTime + " " + bookNumber + " transfers from "
                             + "normal to normal"); //
+                    System.out.println("(Sequence) " + nowTime +
+                            " Main sends a message to Library");  //
                 }
             } else if (curBook.getCategory().equals("C")) {  // 借C类书
                 if (!students.get(stuId).queryOwnBook(bookNumber)) { //同一书号只能有一个副本
@@ -179,6 +185,8 @@ public class Library {    //图书馆
                             schoolName + "-" + bookNumber + " to " + stuId);
                     System.out.println("(State) " + nowTime + " " + bookNumber +
                             " transfers from normal to borrowed"); //
+                    System.out.println("(Sequence) " + nowTime +
+                            " Main sends a message to Library");  //
                     System.out.println(nowTime + " " + stuId + " borrowed " + schoolName + "-" +
                             bookNumber + " from self-service machine");
                 } else {
@@ -188,6 +196,8 @@ public class Library {    //图书馆
                             schoolName + "-" + bookNumber + " to " + stuId);
                     System.out.println("(State) " + nowTime + " " + bookNumber + " transfers from "
                             + "normal to normal"); //
+                    System.out.println("(Sequence) " + nowTime +
+                            " Main sends a message to Library");  //
                     curBook.setAvailaCopies(1);
                 }
             }  // 直接省略A类书
